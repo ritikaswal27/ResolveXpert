@@ -1,4 +1,3 @@
-// src/components/common/Navbar.js
 import React from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
@@ -11,11 +10,11 @@ const Navbar = () => {
 
   return (
     <NavContainer>
-      <LogoWrapper>
-        <Logo />
-      </LogoWrapper>
+      <NavContent>
+        <LogoWrapper>
+          <Logo />
+        </LogoWrapper>
 
-      <ContentWrapper>
         <Title>
           {location.pathname === '/'}
           {location.pathname === '/login' && 'Welcome to ResolveXpert.'}
@@ -24,12 +23,12 @@ const Navbar = () => {
 
         {isDashboard && (
           <IconsWrapper>
-            <FiSearch size={20} />
-            <FiBell size={20} />
+            <FiSearch size={24} />
+            <FiBell size={24} />
             <ProfileIcon>profile</ProfileIcon>
           </IconsWrapper>
         )}
-      </ContentWrapper>
+      </NavContent>
     </NavContainer>
   );
 };
@@ -39,45 +38,53 @@ export default Navbar;
 // Styled components
 const NavContainer = styled.nav`
   display: flex;
+  justify-content: center;
+  padding: 10px 30px;
+  height: 100px;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1); /* Subtle bottom border */
+  margin: 0 20px;
+  position: relative;
+  z-index: 8;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+    height: 80px;
+    margin: 0 10px;
+  }
+`;
+
+const NavContent = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  height: 60px;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const LogoWrapper = styled.div`
   flex: 1;
 `;
 
-const ContentWrapper = styled.div`
-  flex: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  @media (max-width: 768px) {
-    justify-content: center;
-    flex: 3;
-  }
-`;
-
 const Title = styled.h1`
-  font-size: 18px;
-  margin: 0;
+  flex: 2;
+  font-size: 26px;
+  font-family: 'Gloria Hallelujah', sans-serif;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
 
   @media (max-width: 768px) {
-    font-size: 16px;
-    text-align: center;
+    font-size: 20px;
   }
 `;
 
 const IconsWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 
   @media (max-width: 768px) {
     gap: 10px;
@@ -85,13 +92,20 @@ const IconsWrapper = styled.div`
 `;
 
 const ProfileIcon = styled.div`
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 14px;
+  color: #333;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
 `;

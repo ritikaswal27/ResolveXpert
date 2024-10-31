@@ -1,11 +1,8 @@
 import React from 'react';
+import logoImage from '../assets/logo1.png';
 
 const Logo = () => (
-  <img
-    src='../assets/logo1.png'
-    alt='Company Logo'
-    style={{ height: '50px' }}
-  />
+  <img src={logoImage} alt='Company Logo' style={{ height: '90px' }} />
 );
 
 export default Logo;
