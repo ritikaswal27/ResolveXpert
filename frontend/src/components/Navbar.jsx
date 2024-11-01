@@ -6,7 +6,7 @@ import { FiSearch, FiBell } from 'react-icons/fi'; // Icons for search and notif
 
 const Navbar = () => {
   const location = useLocation();
-  const isDashboard = location.pathname.includes('/employee-dashboard');
+  const isDashboard = location.pathname.includes('/dashboard');
 
   return (
     <NavContainer>

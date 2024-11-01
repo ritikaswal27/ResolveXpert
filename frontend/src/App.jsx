@@ -14,6 +14,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { WelcomePage } from './pages';
 
 const App = () => {
+  console.log();
   return (
     <AuthProvider>
       <Router>
@@ -23,7 +24,7 @@ const App = () => {
           <Route path='/' element={<WelcomePage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route
-            path='/employee-dashboard'
+            path='/dashboard'
             element={
               <PrivateRoute>
                 <DashboardPage />
@@ -41,7 +42,7 @@ const App = () => {
 // Private route component to protect dashboard routes
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
-
+  console.log(user);
   return user ? children : <Navigate to='/login' replace />;
 };
 
