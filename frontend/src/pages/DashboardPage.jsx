@@ -3,6 +3,7 @@ import React, { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import IssueTable from '../components/IssueTable';
+import IssueModal from '../components/IssueModal';
 import { useAuth } from '../context/AuthContext';
 
 const initialState = {
@@ -33,6 +34,7 @@ const DashboardPage = () => {
   const { user } = useAuth();
   const [state, dispatch] = useReducer(reducer, initialState);
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [selectedIssue, setSelectedIssue] = useState(null);
 
   return (
     <Container>
@@ -73,9 +75,18 @@ const DashboardPage = () => {
               </Select>
             </SortSection>
           </TopSection>
-          <IssueTable filter={state.filter} sort={state.sort} userRole={user} />
+          <IssueTable
+            filter={state.filter}
+            sort={state.sort}
+            userRole={user}
+            onIssueClick={(issue) => setSelectedIssue(issue)}
+          />
         </MainContent>
       </DashboardContainer>
+      <IssueModal
+        issue={selectedIssue}
+        onClose={() => setSelectedIssue(null)}
+      />
     </Container>
   );
 };

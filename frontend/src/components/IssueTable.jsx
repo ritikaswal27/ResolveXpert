@@ -2,14 +2,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const IssueTable = ({ filter, sort, userRole }) => {
+const IssueTable = ({ filter, sort, userRole, onIssueClick }) => {
   const issues = [
     {
-      type: 'Bug',
-      title: 'Login page error',
+      type: 'Software',
+      title: 'Eclipse not running',
       status: 'To Do',
-      assignee: 'Support',
-      reporter: 'John',
+      assignee: 'Someone',
+      reporter: 'Ritik',
     },
     // Add more issue data here
   ];
@@ -51,9 +51,7 @@ const IssueTable = ({ filter, sort, userRole }) => {
               <tr key={index}>
                 <td>{issue.type}</td>
                 <td>
-                  <Link onClick={() => alert('Navigate to issue detail')}>
-                    {issue.title}
-                  </Link>
+                  <Link onClick={() => onIssueClick(issue)}>{issue.title}</Link>
                 </td>
                 <td>{issue.status}</td>
                 <td>
