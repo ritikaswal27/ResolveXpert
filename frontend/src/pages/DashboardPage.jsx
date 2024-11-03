@@ -1,40 +1,68 @@
-// src/pages/DashboardPage.js
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import IssueTable from '../components/IssueTable';
 import IssueModal from '../components/IssueModal';
+import { dashboardReducer, initialState } from '../reducers/dashboardReducer';
 import { useAuth } from '../context/AuthContext';
-
-const initialState = {
-  filter: {
-    category: 'all',
-    status: 'all',
-    assignee: 'all',
-    onlyMyIssues: false,
-  },
-  sort: {
-    field: 'createdAt',
-    order: 'asc',
-  },
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'SET_FILTER':
-      return { ...state, filter: { ...state.filter, ...action.payload } };
-    case 'SET_SORT':
-      return { ...state, sort: action.payload };
-    default:
-      return state;
-  }
-};
 
 const DashboardPage = () => {
   const { user } = useAuth();
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [sidebarVisible, setSidebarVisible] = useState(true);
   const [selectedIssue, setSelectedIssue] = useState(null);
+  const [state, dispatch] = useReducer(dashboardReducer, initialState);
+
+  // Fetch initial data for categories, statuses, and assignees
+  // useEffect(() => {
+  //   const fetchDropdownOptions = async () => {
+  //     try {
+  //       dispatch({ type: 'SET_LOADING', payload: true });
+  //       const [categories, statuses, assignees] = await Promise.all([
+  //         fetch('/api/categories').then((res) => res.json()),
+  //         fetch('/api/statuses').then((res) => res.json()),
+  //         fetch('/api/assignees').then((res) => res.json()),
+  //       ]);
+  //       dispatch({
+  //         type: 'SET_DATA',
+  //         payload: { categories, statuses, assignees },
+  //       });
+  //     } finally {
+  //       dispatch({ type: 'SET_LOADING', payload: false });
+  //     }
+  //   };
+
+  //   fetchDropdownOptions();
+  // }, []);
+
+  // Fetch issues when filter, sort, or pagination changes
+  // useEffect(() => {
+  //   const fetchIssues = async () => {
+  //     dispatch({ type: 'SET_LOADING', payload: true });
+  //     const { page, limit } = state.pagination;
+  //     const { category, status, assignee, search } = state.filter;
+  //     const { field, order } = state.sort;
+
+  //     const query = new URLSearchParams({
+  //       page,
+  //       limit,
+  //       category: category !== 'all' ? category : 'all',
+  //       status: status !== 'all' ? status : 'all',
+  //       assignee: assignee !== 'all' ? assignee : 'all',
+  //       sortBy: field,
+  //       sortOrder: order,
+  //       search,
+  //     });
+
+  //     try {
+  //       const response = await fetch(`/api/issues?${query}`);
+  //       const data = await response.json();
+  //       dispatch({ type: 'SET_DATA', payload: { issues: data.issues } });
+  //     } finally {
+  //       dispatch({ type: 'SET_LOADING', payload: false });
+  //     }
+  //   };
+
+  //   fetchIssues();
+  // }, [state.filter, state.sort, state.pagination]);
 
   return (
     <Container>
@@ -42,23 +70,21 @@ const DashboardPage = () => {
         Hello, {user ? user.split(' ')[0] : 'User'}!
       </GreetingSection>
       <DashboardContainer>
-        <SidebarToggle onClick={() => setSidebarVisible(!sidebarVisible)}>
-          {sidebarVisible ? 'Hide Filters' : 'Show Filters'}
-        </SidebarToggle>
-        {sidebarVisible && (
-          <Sidebar
-            filter={state.filter}
-            onFilterChange={(payload) =>
-              dispatch({ type: 'SET_FILTER', payload })
-            }
-            sort={state.sort}
-            onSortChange={(payload) => dispatch({ type: 'SET_SORT', payload })}
-            userRole={user}
-          />
-        )}
-        <MainContent sidebarVisible={sidebarVisible}>
+        <Sidebar
+          filter={state.filter}
+          onFilterChange={(payload) =>
+            dispatch({ type: 'SET_FILTER', payload })
+          }
+          sort={state.sort}
+          onSortChange={(payload) => dispatch({ type: 'SET_SORT', payload })}
+          userRole={user}
+          categories={state.data.categories}
+          statuses={state.data.statuses}
+          assignees={state.data.assignees}
+        />
+        <MainContent sidebarVisible={true}>
           <TopSection>
-            <IssuesFound>{/* 0 */} Issues Found</IssuesFound>
+            <IssuesFound>{state.data.issues.length} Issues Found</IssuesFound>
             <SortSection>
               <Label>Sort By</Label>
               <Select
@@ -76,11 +102,18 @@ const DashboardPage = () => {
             </SortSection>
           </TopSection>
           <IssueTable
+            issues={state.data.issues}
             filter={state.filter}
             sort={state.sort}
-            userRole={user}
+            pagination={state.pagination}
             onIssueClick={(issue) => setSelectedIssue(issue)}
+            onPageChange={(page) =>
+              dispatch({ type: 'SET_PAGINATION', payload: { page } })
+            }
           />
+          <CreateButton onClick={() => alert('Open create issue modal')}>
+            + Create
+          </CreateButton>
         </MainContent>
       </DashboardContainer>
       <IssueModal
@@ -101,9 +134,18 @@ const Container = styled.div`
 `;
 
 const GreetingSection = styled.div`
-  padding: 10px 20px;
+  padding: 20px;
   font-size: 24px;
   font-weight: bold;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  margin: 20px;
+  text-align: left;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+    padding: 15px;
+  }
 `;
 
 const DashboardContainer = styled.div`
@@ -135,6 +177,7 @@ const MainContent = styled.div`
   padding: 20px;
   overflow-y: auto;
   transition: margin-left 0.3s ease;
+  position: relative;
 
   @media (max-width: 768px) {
     margin-left: ${({ sidebarVisible }) => (sidebarVisible ? '0' : '0')};
@@ -174,4 +217,22 @@ const Label = styled.label`
 
 const Select = styled.select`
   padding: 5px;
+`;
+
+const CreateButton = styled.button`
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;

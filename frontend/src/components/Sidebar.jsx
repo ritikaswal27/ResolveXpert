@@ -1,10 +1,28 @@
-// src/components/dashboard/Sidebar.js
 import React from 'react';
 import styled from 'styled-components';
+import { initialState } from '../reducers/dashboardReducer';
 
-const Sidebar = ({ filter, onFilterChange, sort, onSortChange, userRole }) => {
+const Sidebar = ({
+  filter,
+  onFilterChange,
+  sort,
+  onSortChange,
+  userRole,
+  categories,
+  statuses,
+  assignees,
+}) => {
   return (
     <SidebarContainer>
+      <SearchSection>
+        <SearchInput
+          type='text'
+          placeholder='Search issues...'
+          value={filter.search}
+          onChange={(e) => onFilterChange({ search: e.target.value })}
+        />
+      </SearchSection>
+
       <Section>
         <Label>Category</Label>
         <Select
@@ -12,9 +30,11 @@ const Sidebar = ({ filter, onFilterChange, sort, onSortChange, userRole }) => {
           onChange={(e) => onFilterChange({ category: e.target.value })}
         >
           <option value='all'>All</option>
-          <option value='bug'>Bug</option>
-          <option value='feature'>Feature</option>
-          <option value='task'>Task</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
         </Select>
       </Section>
 
@@ -25,9 +45,11 @@ const Sidebar = ({ filter, onFilterChange, sort, onSortChange, userRole }) => {
           onChange={(e) => onFilterChange({ status: e.target.value })}
         >
           <option value='all'>All</option>
-          <option value='to-do'>To Do</option>
-          <option value='in-progress'>In Progress</option>
-          <option value='done'>Done</option>
+          {statuses.map((status) => (
+            <option key={status.id} value={status.name}>
+              {status.name}
+            </option>
+          ))}
         </Select>
       </Section>
 
@@ -38,8 +60,11 @@ const Sidebar = ({ filter, onFilterChange, sort, onSortChange, userRole }) => {
           onChange={(e) => onFilterChange({ assignee: e.target.value })}
         >
           <option value='all'>All</option>
-          <option value='support'>Support Team</option>
-          <option value='self'>Only Me</option>
+          {assignees.map((assignee) => (
+            <option key={assignee.id} value={assignee.name}>
+              {assignee.name}
+            </option>
+          ))}
         </Select>
       </Section>
 
@@ -75,6 +100,18 @@ const SidebarContainer = styled.div`
     width: 100%;
     display: ${(props) => (props.visible ? 'block' : 'none')};
   }
+`;
+
+const SearchSection = styled.div`
+  margin-bottom: 20px;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
 `;
 
 const Section = styled.div`

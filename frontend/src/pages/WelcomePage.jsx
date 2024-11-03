@@ -2,7 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import '@fontsource/poppins'; // Import Google Font
+import '@fontsource/poppins';
 
 const StartPage = () => {
   const navigate = useNavigate();
@@ -29,32 +29,16 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 120px); /* Adjust for Navbar height */
+  height: calc(100vh - 120px);
   text-align: center;
   padding: 0 20px;
-  background-color: #f9f9f9; /* Light background for contrast */
+  background-color: #f9f9f9;
   margin-top: -80px;
 `;
 
-// const Content = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   text-align: center;
-//   ${'' /* max-width: 700px; */}
-//   ${
-//     '' /* width: 100%;
-//   height: 100%; */
-//   }
-//   padding: 40px;
-//   background-color: #fff;
-//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-//   border-radius: 12px;
-// `;
-
 const Title = styled.p`
   font-size: 40px;
-  font-family: 'Gloria Hallelujah', sans-serif; /* Use playful font */
+  font-family: 'Gloria Hallelujah', sans-serif;
   color: #333;
   ${'' /* margin-bottom: 20px; */}
   ${'' /* font-weight: bold; */}

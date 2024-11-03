@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = async (email, password) => {
     try {
-      // Example of an API call for authentication
+      // API call for authentication
       const response = await axios.post('/api/login', { email, password });
       setUser(response.data.user); // Assuming response contains user data
       localStorage.setItem('user', JSON.stringify(response.data.user));

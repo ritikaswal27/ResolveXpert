@@ -1,38 +1,7 @@
-// src/components/dashboard/IssueTable.js
 import React from 'react';
 import styled from 'styled-components';
 
-const IssueTable = ({ filter, sort, userRole, onIssueClick }) => {
-  const issues = [
-    {
-      type: 'Software',
-      title: 'Eclipse not running',
-      status: 'To Do',
-      assignee: 'Someone',
-      reporter: 'Ritik',
-    },
-    // Add more issue data here
-  ];
-
-  const filteredIssues = issues.filter((issue) => {
-    if (
-      filter.category !== 'all' &&
-      issue.type.toLowerCase() !== filter.category
-    )
-      return false;
-    if (
-      filter.status !== 'all' &&
-      issue.status.toLowerCase() !== filter.status.toLowerCase()
-    )
-      return false;
-    if (
-      filter.assignee !== 'all' &&
-      issue.assignee.toLowerCase() !== filter.assignee.toLowerCase()
-    )
-      return false;
-    return true;
-  });
-
+const IssueTable = ({ issues, pagination, onPageChange, onIssueClick }) => {
   return (
     <TableContainer>
       <Table>
@@ -43,40 +12,46 @@ const IssueTable = ({ filter, sort, userRole, onIssueClick }) => {
             <th>Status</th>
             <th>Assignee</th>
             <th>Reporter</th>
+            <th>Created</th>
+            <th>Updated</th>
           </tr>
         </thead>
         <tbody>
-          {filteredIssues.length > 0 ? (
-            filteredIssues.map((issue, index) => (
+          {issues.length > 0 ? (
+            issues.map((issue, index) => (
               <tr key={index}>
                 <td>{issue.type}</td>
                 <td>
                   <Link onClick={() => onIssueClick(issue)}>{issue.title}</Link>
                 </td>
-                <td>{issue.status}</td>
                 <td>
-                  <Link
-                    onClick={() => alert(`Show details of ${issue.assignee}`)}
-                  >
-                    {issue.assignee}
-                  </Link>
+                  <StatusBadge status={issue.status}>
+                    {issue.status}
+                  </StatusBadge>
                 </td>
-                <td>
-                  <Link
-                    onClick={() => alert(`Show details of ${issue.reporter}`)}
-                  >
-                    {issue.reporter}
-                  </Link>
-                </td>
+                <td>{issue.assignee}</td>
+                <td>{issue.reporter}</td>
+                <td>{issue.created}</td>
+                <td>{issue.updated}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan='5'>No issues found.</td>
+              <td colSpan='7'>No issues found.</td>
             </tr>
           )}
         </tbody>
       </Table>
+      <Pagination>
+        <button
+          onClick={() => onPageChange(pagination.page - 1)}
+          disabled={pagination.page === 1}
+        >
+          Previous
+        </button>
+        <span>Page {pagination.page}</span>
+        <button onClick={() => onPageChange(pagination.page + 1)}>Next</button>
+      </Pagination>
     </TableContainer>
   );
 };
@@ -103,6 +78,14 @@ const Table = styled.table`
   th {
     background-color: #f4f4f4;
   }
+
+  @media (max-width: 768px) {
+    th,
+    td {
+      padding: 5px;
+      font-size: 12px;
+    }
+  }
 `;
 
 const Link = styled.span`
@@ -112,5 +95,52 @@ const Link = styled.span`
 
   &:hover {
     text-decoration: none;
+  }
+`;
+
+const StatusBadge = styled.span`
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: bold;
+  background-color: ${(props) => {
+    switch (props.status) {
+      case 'To Do':
+        return '#f39c12';
+      case 'In Progress':
+        return '#3498db';
+      case 'Done':
+        return '#2ecc71';
+      default:
+        return '#bdc3c7';
+    }
+  }};
+`;
+const Pagination = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+
+  button {
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+
+  span {
+    font-size: 16px;
+    font-weight: bold;
   }
 `;
