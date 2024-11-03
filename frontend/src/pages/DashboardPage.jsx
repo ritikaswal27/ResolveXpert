@@ -1,5 +1,5 @@
 // src/pages/DashboardPage.js
-import React, { useReducer, useState } from 'react';
+import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import IssueTable from '../components/IssueTable';
