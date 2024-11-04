@@ -37,8 +37,8 @@ const Container = styled.div`
 `;
 
 const Title = styled.p`
-  font-size: 40px;
-  font-family: 'Gloria Hallelujah', sans-serif;
+  font-size: 60px;
+  font-family: 'Candara', sans-serif;
   color: #333;
   ${'' /* margin-bottom: 20px; */}
   ${'' /* font-weight: bold; */}
@@ -53,7 +53,7 @@ const Subtitle = styled.p`
   font-size: 40px;
   color: #333;
   margin-bottom: 44px;
-  font-family: 'Gloria Hallelujah', sans-serif;
+  font-family: 'Candara', sans-serif;
   letter-spacing: 1px;
   @media (max-width: 768px) {
     font-size: 16px;

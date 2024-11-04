@@ -5,7 +5,7 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState('manager');
+  const [user, setUser] = useState({ name: 'Ritik', role: 'manager' });
 
   // Login function
   const login = async (email, password) => {

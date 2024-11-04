@@ -98,7 +98,9 @@ const Link = styled.span`
   }
 `;
 
-const StatusBadge = styled.span`
+const StatusBadge = styled.span.attrs((props) => ({
+  status: undefined,
+}))`
   padding: 5px 10px;
   border-radius: 5px;
   color: #fff;
@@ -116,6 +118,7 @@ const StatusBadge = styled.span`
     }
   }};
 `;
+
 const Pagination = styled.div`
   display: flex;
   justify-content: space-between;

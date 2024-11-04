@@ -8,21 +8,21 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Gloria Hallelujah', sans-serif; /* Updated to Poppins */
+    font-family: 'Roboto', sans-serif;
   }
 
   /* Body styling */
   body {
     line-height: 1.6;
-    background-color: #f5f5f5; /* Light background for contrast */
+    background-color: #f5f5f5; 
     color: #333;
-    padding: 0 20px; /* Padding for consistent spacing */
+    padding: 0 20px; 
   }
 
   /* Responsive styles */
   @media (max-width: 768px) {
     body {
-      padding: 0 10px; /* Reduce padding on mobile */
+      padding: 0 10px; 
     }
   }
 `;

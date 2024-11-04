@@ -2,14 +2,18 @@ import React, { useReducer, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../components/Sidebar';
 import IssueTable from '../components/IssueTable';
-import IssueModal from '../components/IssueModal';
+import IssueDetailModal from '../components/IssueDetailModal';
 import { dashboardReducer, initialState } from '../reducers/dashboardReducer';
 import { useAuth } from '../context/AuthContext';
+import CreateIssueModal from '../components/CreateIssueModal';
+import NewIssueTypeModal from '../components/NewIssueTypeModal';
 
 const DashboardPage = () => {
   const { user } = useAuth();
-  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [selectedIssueId, setSelectedIssueId] = useState(null);
   const [state, dispatch] = useReducer(dashboardReducer, initialState);
+  const [isIssueTypeModalOpen, setIsIssueTypeModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch initial data for categories, statuses, and assignees
   // useEffect(() => {
@@ -64,10 +68,37 @@ const DashboardPage = () => {
   //   fetchIssues();
   // }, [state.filter, state.sort, state.pagination]);
 
+  const handleCreateClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleIssueCreated = (newIssue) => {
+    // Add new issue to state
+    dispatch({ type: 'ADD_ISSUE', payload: newIssue });
+  };
+
+  //New Issue type modal
+  const handleCreateIssueTypeClick = () => {
+    setIsIssueTypeModalOpen(true);
+  };
+
+  const handleIssueTypeModalClose = () => {
+    setIsIssueTypeModalOpen(false);
+  };
+
+  const handleIssueTypeCreated = (newIssueType) => {
+    // Add new issue type to state or handle any UI updates
+    dispatch({ type: 'ADD_ISSUE_TYPE', payload: newIssueType });
+  };
+
   return (
     <Container>
       <GreetingSection>
-        Hello, {user ? user.split(' ')[0] : 'User'}!
+        Hello, {user ? user.name?.split(' ')[0] : 'User'}!
       </GreetingSection>
       <DashboardContainer>
         <Sidebar
@@ -106,19 +137,40 @@ const DashboardPage = () => {
             filter={state.filter}
             sort={state.sort}
             pagination={state.pagination}
-            onIssueClick={(issue) => setSelectedIssue(issue)}
+            onIssueClick={(issue) => setSelectedIssueId(issue)}
             onPageChange={(page) =>
               dispatch({ type: 'SET_PAGINATION', payload: { page } })
             }
           />
-          <CreateButton onClick={() => alert('Open create issue modal')}>
-            + Create
-          </CreateButton>
+
+          {user && user.role === 'manager' ? (
+            <CreateButton onClick={handleCreateIssueTypeClick}>
+              + Create Issue Type
+            </CreateButton>
+          ) : (
+            <CreateButton onClick={() => handleCreateClick()}>
+              + Create
+            </CreateButton>
+          )}
+
+          {isModalOpen && (
+            <CreateIssueModal
+              onClose={handleModalClose}
+              onIssueCreated={handleIssueCreated}
+            />
+          )}
+
+          {isIssueTypeModalOpen && (
+            <NewIssueTypeModal
+              onClose={handleIssueTypeModalClose}
+              onIssueTypeCreated={handleIssueTypeCreated}
+            />
+          )}
         </MainContent>
       </DashboardContainer>
-      <IssueModal
-        issue={selectedIssue}
-        onClose={() => setSelectedIssue(null)}
+      <IssueDetailModal
+        issue={selectedIssueId}
+        onClose={() => setSelectedIssueId(null)}
       />
     </Container>
   );
@@ -172,7 +224,9 @@ const SidebarToggle = styled.button`
   }
 `;
 
-const MainContent = styled.div`
+const MainContent = styled.div.attrs((props) => ({
+  sidebarVisible: undefined,
+}))`
   flex: 1;
   padding: 20px;
   overflow-y: auto;
@@ -180,7 +234,7 @@ const MainContent = styled.div`
   position: relative;
 
   @media (max-width: 768px) {
-    margin-left: ${({ sidebarVisible }) => (sidebarVisible ? '0' : '0')};
+    margin-left: ${(props) => (props.sidebarVisible ? '0' : '0')};
   }
 `;
 

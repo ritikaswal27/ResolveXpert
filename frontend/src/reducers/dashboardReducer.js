@@ -1,4 +1,4 @@
-export const initialState = {
+const initialState = {
   filter: {
     category: 'all',
     status: 'all',
@@ -17,19 +17,61 @@ export const initialState = {
   data: {
     issues: [
       {
-        issueId: "5678"
+        issueId: '5678',
         type: 'software',
         title: 'Eclipse not working',
+        description:
+          'Eclipse IDE fails to start after the latest update. Error related to Java runtime environment.',
         status: 'Not_Approved',
-        assignee: 'rahul',
+        assignee: 'Rahul',
         reporter: 'Ritik',
         created: '03-11-2024',
-        updated: "date"
+        updated: '04-11-2024',
+        remarks: ['Restarted the IDE'],
+      },
+      {
+        issueId: '5679',
+        type: 'hardware',
+        title: 'Keyboard not functioning',
+        description:
+          'Certain keys on the keyboard are not responsive after the device restart.',
+        status: 'In_Progress',
+        assignee: 'Sonal',
+        reporter: 'Amit',
+        created: '02-11-2024',
+        updated: '04-11-2024',
+        remarks: ['Checked connections', 'Ordered replacement keyboard'],
+      },
+      {
+        issueId: '5680',
+        type: 'network',
+        title: 'VPN connection unstable',
+        description:
+          'Frequent disconnections when connected to the VPN. Affects ability to access remote resources.',
+        status: 'Approved',
+        assignee: 'Neha',
+        reporter: 'Suresh',
+        created: '01-11-2024',
+        updated: '03-11-2024',
+        remarks: ['Reconfigured VPN settings', 'Network team notified'],
+      },
+      {
+        issueId: '5681',
+        type: 'software',
+        title: 'Error 404 on internal portal',
+        description:
+          'Receiving a 404 error when trying to access the internal documentation portal.',
+        status: 'Resolved',
+        assignee: 'Karan',
+        reporter: 'Ritika',
+        created: '30-10-2024',
+        updated: '01-11-2024',
+        remarks: ['Cleared cache and cookies', 'Fixed routing issue on server'],
       },
     ],
     categories: [],
     statuses: [],
-    assignees: [],
+    assignees: ['ritik', 'manav', 'ashutosh'],
   },
   loading: false,
 };
