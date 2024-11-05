@@ -186,13 +186,14 @@ const Container = styled.div`
 `;
 
 const GreetingSection = styled.div`
-  padding: 20px;
+  padding: 20px 2rem;
   font-size: 24px;
   font-weight: bold;
   background-color: #e0e0e0;
   border-radius: 8px;
   margin: 20px;
   text-align: left;
+  
 
   @media (max-width: 768px) {
     font-size: 20px;
