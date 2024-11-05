@@ -12,30 +12,42 @@ import DashboardPage from './pages/DashboardPage';
 import Navbar from './components/Navbar';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { WelcomePage } from './pages';
+import IssueApprovalPage from './pages/IssueApprovalPage';
+import { IssueProvider } from './context/IssueContext';
 
 const App = () => {
   console.log();
   return (
-    <AuthProvider>
-      <Router>
-        <GlobalStyles />
-        <Navbar />
-        <Routes>
-          <Route path='/' element={<WelcomePage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route
-            path='/dashboard'
-            element={
-              <PrivateRoute>
-                <DashboardPage />
-              </PrivateRoute>
-            }
-          />
-          {/* Add other roles' dashboards as needed */}
-          <Route path='*' element={<Navigate to='/' replace />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <IssueProvider>
+      <AuthProvider>
+        <Router>
+          <GlobalStyles />
+          <Navbar />
+          <Routes>
+            <Route path='/' element={<WelcomePage />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route
+              path='/dashboard'
+              element={
+                <PrivateRoute>
+                  <DashboardPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/approvals'
+              element={
+                <PrivateRoute>
+                  <IssueApprovalPage />
+                </PrivateRoute>
+              }
+            />
+            {/* Add other roles' dashboards as needed */}
+            <Route path='*' element={<Navigate to='/' replace />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </IssueProvider>
   );
 };
 

@@ -1,3 +1,5 @@
+// context/IssueContext.js
+
 const initialState = {
   filter: {
     category: 'all',
@@ -5,6 +7,12 @@ const initialState = {
     assignee: 'all',
     onlyMyIssues: false,
     search: '',
+  },
+  approvalFilters: {
+    // New filters specific to Issue Approval Page
+    issueAge: 'All',
+    raisedBy: 'All',
+    sortBy: 'Submission Date (Newest)',
   },
   sort: {
     field: 'createdAt',
@@ -69,7 +77,7 @@ const initialState = {
         remarks: ['Cleared cache and cookies', 'Fixed routing issue on server'],
       },
     ],
-    categories: [],
+    categories: ['Software', 'Hardware'],
     statuses: [],
     assignees: ['ritik', 'manav', 'ashutosh'],
   },
@@ -80,6 +88,11 @@ const dashboardReducer = (state, action) => {
   switch (action.type) {
     case 'SET_FILTER':
       return { ...state, filter: { ...state.filter, ...action.payload } };
+    case 'SET_APPROVAL_FILTER': // New case for Issue Approval Page filters
+      return {
+        ...state,
+        approvalFilters: { ...state.approvalFilters, ...action.payload },
+      };
     case 'SET_SORT':
       return { ...state, sort: action.payload };
     case 'SET_PAGINATION':

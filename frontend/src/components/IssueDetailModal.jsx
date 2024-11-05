@@ -596,12 +596,6 @@ const IssueModal = ({ issue, onClose }) => {
                 <strong>Reporter:</strong> {issue.reporter}
               </DetailItem>
               <DetailItem>
-                <strong>Created:</strong> {issue.createdAt}
-              </DetailItem>
-              <DetailItem>
-                <strong>Updated:</strong> {issue.updatedAt}
-              </DetailItem>
-              <DetailItem>
                 <strong>Status:</strong>{' '}
                 {isManagerOrSupport ? (
                   <StatusDropdown
@@ -623,6 +617,12 @@ const IssueModal = ({ issue, onClose }) => {
                 ) : (
                   issue.status
                 )}
+              </DetailItem>
+              <DetailItem>
+                <strong>Created:</strong> {issue.createdAt}
+              </DetailItem>
+              <DetailItem>
+                <strong>Updated:</strong> {issue.updatedAt}
               </DetailItem>
             </DetailsList>
             {isManagerOrSupport && (

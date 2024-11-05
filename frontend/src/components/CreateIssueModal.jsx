@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { dashboardReducer, initialState } from '../reducers/dashboardReducer';
 
 const NewIssueModal = ({ onClose, onIssueCreated }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    status: 'Open', // Default status
-    issueType: 'Bug', // Default issue type
+    issueType: '',
   });
   const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useReducer(dashboardReducer, initialState);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -23,6 +24,7 @@ const NewIssueModal = ({ onClose, onIssueCreated }) => {
     setError(null);
 
     try {
+      console.log(formData);
       const response = await axios.post('/api/issues', formData);
       onIssueCreated(response.data); // Pass new issue data back to parent
       onClose(); // Close modal on success
@@ -75,10 +77,16 @@ const NewIssueModal = ({ onClose, onIssueCreated }) => {
               name='issueType'
               value={formData.issueType}
               onChange={handleChange}
+              required
             >
-              <option value='Bug'>Bug</option>
-              <option value='Feature Request'>Feature Request</option>
-              <option value='Task'>Task</option>
+              <option value='' disabled>
+                Select
+              </option>
+              {state.data.categories?.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
             </select>
           </label>
           {error && <ErrorMessage>{error}</ErrorMessage>}
