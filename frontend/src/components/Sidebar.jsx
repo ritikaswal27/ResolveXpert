@@ -95,6 +95,7 @@ const SidebarContainer = styled.div`
   padding: 20px;
   transition: transform 0.3s ease;
   height: auto;
+  margin-left: 20px;
 
   @media (max-width: 768px) {
     width: 100%;
