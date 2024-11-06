@@ -1,12 +1,12 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Sidebar from '../components/Sidebar';
-import IssueTable from '../components/IssueTable';
-import IssueDetailModal from '../components/IssueDetailModal';
+import Sidebar from '../components/dashboard/Sidebar';
+import IssueTable from '../components/dashboard/IssueTable';
+import IssueDetailModal from '../components/dashboard/IssueDetailModal';
 import { dashboardReducer, initialState } from '../reducers/dashboardReducer';
 import { useAuth } from '../context/AuthContext';
-import CreateIssueModal from '../components/CreateIssueModal';
-import NewIssueTypeModal from '../components/NewIssueTypeModal';
+import CreateIssueModal from '../components/dashboard/CreateIssueModal';
+import NewIssueTypeModal from '../components/dashboard/NewIssueTypeModal';
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -68,6 +68,7 @@ const DashboardPage = () => {
   //   fetchIssues();
   // }, [state.filter, state.sort, state.pagination]);
 
+  // Add a new Issue modal ---------------------------------------
   const handleCreateClick = () => {
     setIsModalOpen(true);
   };
@@ -77,11 +78,10 @@ const DashboardPage = () => {
   };
 
   const handleIssueCreated = (newIssue) => {
-    // Add new issue to state
-    dispatch({ type: 'ADD_ISSUE', payload: newIssue });
+    console.log(newIssue);
   };
 
-  //New Issue type modal
+  //New Issue type modal---------------------------------------------
   const handleCreateIssueTypeClick = () => {
     setIsIssueTypeModalOpen(true);
   };
@@ -193,7 +193,6 @@ const GreetingSection = styled.div`
   border-radius: 8px;
   margin: 20px;
   text-align: left;
-  
 
   @media (max-width: 768px) {
     font-size: 20px;

@@ -1,21 +1,21 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { dashboardReducer, initialState } from '../reducers/dashboardReducer';
 
-const NewIssueModal = ({ onClose, onIssueCreated }) => {
+const NewIssueTypeModal = ({ onClose, onIssueTypeCreated }) => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    issueType: '',
+    name: '',
+    auto_accept: 'false',
   });
   const [loading, setLoading] = useState(false);
-  const [state, dispatch] = useReducer(dashboardReducer, initialState);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? String(checked) : value, // Convert checkbox to string
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -24,12 +24,11 @@ const NewIssueModal = ({ onClose, onIssueCreated }) => {
     setError(null);
 
     try {
-      console.log(formData);
-      const response = await axios.post('/api/issues', formData);
-      onIssueCreated(response.data); // Pass new issue data back to parent
+      const response = await axios.put('/api/issues/type', formData);
+      onIssueTypeCreated(response.data); // Pass new issue type data back to parent
       onClose(); // Close modal on success
     } catch (err) {
-      setError('Failed to create issue. Please try again.');
+      setError('Failed to create issue type. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -38,60 +37,30 @@ const NewIssueModal = ({ onClose, onIssueCreated }) => {
   return (
     <ModalOverlay>
       <ModalContent>
-        <h2>New Issue</h2>
+        <h2>New Issue Type</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Title:
+            Name:
             <input
               type='text'
-              name='title'
-              value={formData.title}
+              name='name'
+              value={formData.name}
               onChange={handleChange}
               required
             />
           </label>
           <label>
-            Description:
-            <textarea
-              name='description'
-              value={formData.description}
+            Auto Accept:
+            <input
+              type='checkbox'
+              name='auto_accept'
+              checked={formData.auto_accept === 'true'}
               onChange={handleChange}
-              required
             />
-          </label>
-          {/* <label>
-            Status:
-            <select
-              name='status'
-              value={formData.status}
-              onChange={handleChange}
-            >
-              <option value='Open'>Open</option>
-              <option value='In Progress'>In Progress</option>
-              <option value='Closed'>Closed</option>
-            </select>
-          </label> */}
-          <label>
-            Issue Type:
-            <select
-              name='issueType'
-              value={formData.issueType}
-              onChange={handleChange}
-              required
-            >
-              <option value='' disabled>
-                Select
-              </option>
-              {state.data.categories?.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
           </label>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           <button type='submit' disabled={loading}>
-            {loading ? 'Creating...' : 'Create Issue'}
+            {loading ? 'Creating...' : 'Create Issue Type'}
           </button>
           <button type='button' onClick={onClose}>
             Cancel
@@ -102,7 +71,7 @@ const NewIssueModal = ({ onClose, onIssueCreated }) => {
   );
 };
 
-export default NewIssueModal;
+export default NewIssueTypeModal;
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -135,14 +104,16 @@ export const ModalContent = styled.div`
     font-weight: bold;
   }
 
-  input,
-  textarea,
-  select {
+  input[type='text'] {
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
+  }
+
+  input[type='checkbox'] {
+    margin-top: 0.5rem;
   }
 
   button {

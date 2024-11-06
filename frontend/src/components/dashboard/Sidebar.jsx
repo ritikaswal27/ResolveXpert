@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { initialState } from '../reducers/dashboardReducer';
+import { initialState } from '../../reducers/dashboardReducer';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = ({
   filter,
@@ -12,6 +13,8 @@ const Sidebar = ({
   statuses,
   assignees,
 }) => {
+  const { user } = useAuth();
+  const isSupport = user.role === 'support';
   return (
     <SidebarContainer>
       <SearchSection>
@@ -31,8 +34,8 @@ const Sidebar = ({
         >
           <option value='all'>All</option>
           {categories.map((category) => (
-            <option key={category.id} value={category.name}>
-              {category.name}
+            <option key={category.id} value={category}>
+              {category}
             </option>
           ))}
         </Select>
@@ -46,8 +49,8 @@ const Sidebar = ({
         >
           <option value='all'>All</option>
           {statuses.map((status) => (
-            <option key={status.id} value={status.name}>
-              {status.name}
+            <option key={status.id} value={status}>
+              {status}
             </option>
           ))}
         </Select>
@@ -61,23 +64,27 @@ const Sidebar = ({
         >
           <option value='all'>All</option>
           {assignees.map((assignee) => (
-            <option key={assignee.id} value={assignee.name}>
-              {assignee.name}
+            <option key={assignee.id} value={assignee}>
+              {assignee}
             </option>
           ))}
         </Select>
       </Section>
 
-      <Section>
-        <CheckboxLabel>
-          <input
-            type='checkbox'
-            checked={filter.onlyMyIssues}
-            onChange={(e) => onFilterChange({ onlyMyIssues: e.target.checked })}
-          />
-          Show only my issues
-        </CheckboxLabel>
-      </Section>
+      {isSupport && (
+        <Section>
+          <CheckboxLabel>
+            <input
+              type='checkbox'
+              checked={filter.onlyMyIssues}
+              onChange={(e) =>
+                onFilterChange({ onlyMyIssues: e.target.checked })
+              }
+            />
+            Issues assigned to me
+          </CheckboxLabel>
+        </Section>
+      )}
 
       <ClearFiltersButton onClick={() => onFilterChange(initialState.filter)}>
         Clear Filters

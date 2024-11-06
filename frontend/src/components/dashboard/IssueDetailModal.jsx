@@ -461,8 +461,8 @@
 // src/components/dashboard/IssueModal.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useAuth } from '../context/AuthContext';
-import { initialState } from '../reducers/dashboardReducer';
+import { useAuth } from '../../context/AuthContext';
+import { initialState } from '../../reducers/dashboardReducer';
 
 const IssueModal = ({ issue, onClose }) => {
   if (!issue) return null;
@@ -474,6 +474,7 @@ const IssueModal = ({ issue, onClose }) => {
     issue.assignee || ''
   );
   const isManagerOrSupport = user.role === 'manager' || user.role === 'support';
+  const isManager = user.role === 'manager';
 
   // Handle Update
   const handleUpdate = async () => {
@@ -571,7 +572,7 @@ const IssueModal = ({ issue, onClose }) => {
               </DetailItem>
               <DetailItem>
                 <strong>Assignee:</strong>{' '}
-                {isManagerOrSupport ? (
+                {isManager ? (
                   <StatusDropdown
                     value={editableAssignee}
                     onChange={handleAssigneeChange}

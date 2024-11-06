@@ -1,5 +1,5 @@
 // src/components/IssueDetailModal.js
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const ModalBackground = styled.div`
@@ -55,30 +55,65 @@ const Button = styled.button`
   border-radius: 5px;
   cursor: pointer;
   border: none;
+  color: white;
 
   &:first-child {
     background-color: #ff4d4d;
-    color: white;
   }
 
   &:last-child {
     background-color: #4caf50;
-    color: white;
   }
 
   &:hover {
     opacity: 0.9;
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
-const IssueDetailModal = ({
-  issue,
-  onClose,
-  onApprove,
-  onReject,
-  onCommentChange,
-}) => {
+const Message = styled.p`
+  margin-top: 15px;
+  color: ${(props) => (props.success ? 'green' : 'red')};
+`;
+
+const IssueDetailModal = ({ issue, onClose, onApprove, onReject }) => {
+  const [comment, setComment] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
   if (!issue) return null; // If no issue is selected, don't render anything
+
+  const handleApprove = async () => {
+    setLoading(true);
+    setMessage('');
+    try {
+      await onApprove(issue.id, comment);
+      setMessage('Issue approved successfully!');
+    } catch (error) {
+      setMessage('Failed to approve the issue.');
+    } finally {
+      setLoading(false);
+      onClose();
+    }
+  };
+
+  const handleReject = async () => {
+    setLoading(true);
+    setMessage('');
+    try {
+      await onReject(issue.id, comment);
+      setMessage('Issue rejected successfully!');
+    } catch (error) {
+      setMessage('Failed to reject the issue.');
+    } finally {
+      setLoading(false);
+      onClose();
+    }
+  };
 
   return (
     <ModalBackground onClick={onClose}>
@@ -107,14 +142,25 @@ const IssueDetailModal = ({
           </label>
           <CommentInput
             placeholder='Add your comment here...'
-            onChange={(e) => onCommentChange(e.target.value)}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
           />
         </ModalContent>
 
         <ButtonContainer>
-          <Button onClick={() => onReject(issue.id)}>Reject</Button>
-          <Button onClick={() => onApprove(issue.id)}>Approve</Button>
+          <Button onClick={handleReject} disabled={loading}>
+            {loading ? 'Processing...' : 'Reject'}
+          </Button>
+          <Button onClick={handleApprove} disabled={loading}>
+            {loading ? 'Processing...' : 'Approve'}
+          </Button>
         </ButtonContainer>
+
+        {message && (
+          <Message success={message.includes('successfully')}>
+            {message}
+          </Message>
+        )}
       </ModalContainer>
     </ModalBackground>
   );

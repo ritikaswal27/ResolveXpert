@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 const PaginationContainer = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin-top: 1rem;
 `;
 

@@ -17,7 +17,7 @@ const IssueTable = ({ issues, pagination, onPageChange, onIssueClick }) => {
           </tr>
         </thead>
         <tbody>
-          {issues.length > 0 ? (
+          {issues && issues.length > 0 ? (
             issues.map((issue, index) => (
               <tr key={index}>
                 <td>{issue.type}</td>

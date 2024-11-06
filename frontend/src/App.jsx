@@ -11,9 +11,9 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import Navbar from './components/Navbar';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { WelcomePage } from './pages';
 import IssueApprovalPage from './pages/IssueApprovalPage';
 import { IssueProvider } from './context/IssueContext';
+import GetAllUsersPage from './pages/UsersPage';
 
 const App = () => {
   console.log();
@@ -24,7 +24,7 @@ const App = () => {
           <GlobalStyles />
           <Navbar />
           <Routes>
-            <Route path='/' element={<WelcomePage />} />
+            <Route path='/' element={<LoginPage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route
               path='/dashboard'
@@ -39,6 +39,14 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <IssueApprovalPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/users'
+              element={
+                <PrivateRoute>
+                  <GetAllUsersPage />
                 </PrivateRoute>
               }
             />
