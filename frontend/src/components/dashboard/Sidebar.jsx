@@ -64,7 +64,7 @@ const Sidebar = ({
           onChange={(e) => onFilterChange({ assignee: e.target.value })}
         >
           <option value='all'>All</option>
-          {assignees.map((assignee) => (
+          {assignees?.map?.((assignee) => (
             <option key={assignee.id} value={assignee.name}>
               {assignee.name}
             </option>

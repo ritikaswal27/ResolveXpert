@@ -21,14 +21,13 @@ const LoginPage = () => {
   };
 
   if (user) {
-    return <Navigate to={'/users'} />;
+    return <Navigate to={'/dashboard'} />;
   }
 
   return (
     <Container>
       <LeftPanel>
         <GreetingSection>
-          {/* <Logo>ResolveXpert</Logo> */}
           <Greeting>Welcome to ResolveXpert!</Greeting>
           <Description>
             Simplify issue reporting, tracking, and resolution.
@@ -65,7 +64,7 @@ export default LoginPage;
 // Styled Components
 const Container = styled.div`
   display: flex;
-  height: 90vh;
+  height: 100vh;
   font-family: 'Roboto', sans-serif;
 `;
 
@@ -77,6 +76,7 @@ const LeftPanel = styled.div`
   padding: 60px 40px;
   background: linear-gradient(135deg, #e0e0e0, #9e9e9e);
   // color: #f4f4f4;
+  margin-top: -30px;
 `;
 
 const GreetingSection = styled.div`
@@ -135,6 +135,7 @@ const FormContainer = styled.form`
   width: 100%;
   max-width: 400px;
   text-align: left;
+  margin-top: -40px;
 `;
 
 const Title = styled.h1`

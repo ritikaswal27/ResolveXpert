@@ -28,7 +28,7 @@ export default function Pagination() {
     <PaginationContainer>
       <PageButton
         onClick={() => changePage(pagination.page - 1)}
-        disabled={pagination.page === 1}
+        disabled={pagination.page === 0}
       >
         Previous
       </PageButton>
@@ -43,7 +43,7 @@ export default function Pagination() {
       ))}
       <PageButton
         onClick={() => changePage(pagination.page + 1)}
-        disabled={pagination.page === totalPages}
+        disabled={pagination.page === totalPages + 1}
       >
         Next
       </PageButton>

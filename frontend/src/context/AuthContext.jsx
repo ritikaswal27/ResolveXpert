@@ -5,8 +5,12 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const url = 'http://localhost:8088';
+  const savedUser = localStorage.getItem('user')
+    ? JSON.parse(localStorage.getItem('user'))
+    : null;
+  const [user, setUser] = useState(savedUser);
+  const [loading, setLoading] = useState(false);
+  const url = 'http://127.0.0.1:8088';
 
   // Login function
   const login = async (username, password) => {
@@ -34,15 +38,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Load user data from localStorage on initial load
-  React.useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const savedUser = localStorage.getItem('user');
+  //   if (savedUser) {
+  //     setUser(JSON.parse(savedUser));
+  //   }
+  //   setLoading(false);
+  // }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, url }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, url }}>
       {children}
     </AuthContext.Provider>
   );

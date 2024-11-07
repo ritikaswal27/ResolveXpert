@@ -471,7 +471,7 @@ const IssueModal = ({ issue, onClose }) => {
   const [newComment, setNewComment] = useState('');
   const [editableStatus, setEditableStatus] = useState(issue.status || '');
   const [editableAssignee, setEditableAssignee] = useState(
-    issue.assignee || ''
+    issue.assignee?.name || ''
   );
   const isManagerOrSupport = user.role === 'manager' || user.role === 'support';
   const isManager = user.role === 'manager';
@@ -483,6 +483,7 @@ const IssueModal = ({ issue, onClose }) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
           status: editableStatus,
@@ -528,8 +529,8 @@ const IssueModal = ({ issue, onClose }) => {
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <Header>
           <TitleSection>
-            <IssueTitle>{issue.title}</IssueTitle>
-            <IssueId>{issue.id}</IssueId>
+            <IssueTitle>{issue?.title || ''}</IssueTitle>
+            <IssueId>{issue?.id || ''}</IssueId>
           </TitleSection>
           <CloseButton onClick={onClose}>✖</CloseButton>
         </Header>
@@ -539,7 +540,7 @@ const IssueModal = ({ issue, onClose }) => {
             <Section>
               <SectionTitle>Description</SectionTitle>
               <Description>
-                {issue.description || 'No description...'}
+                {issue?.description || 'No description...'}
               </Description>
             </Section>
 
@@ -568,7 +569,7 @@ const IssueModal = ({ issue, onClose }) => {
             <DetailsTitle>Details</DetailsTitle>
             <DetailsList>
               <DetailItem>
-                <strong>Issue Type:</strong> {issue.issue_type}
+                <strong>Issue Type:</strong> {issue?.issue_type || ''}
               </DetailItem>
               <DetailItem>
                 <strong>Assignee:</strong>{' '}
@@ -578,23 +579,23 @@ const IssueModal = ({ issue, onClose }) => {
                     onChange={handleAssigneeChange}
                   >
                     {/* Populate dropdown options, excluding the current assignee */}
-                    {initialState.data.assignees
+                    {initialState.data?.assignees
                       ?.filter((assignee) => assignee !== editableAssignee)
                       .map((assignee, index) => (
-                        <option key={index} value={assignee}>
-                          {assignee}
+                        <option key={index} value={assignee?.name}>
+                          {assignee?.name || 'Not found'}
                         </option>
                       ))}
                     <option value={editableAssignee} key='default' disabled>
-                      {editableAssignee}
+                      {editableAssignee || ''}
                     </option>
                   </StatusDropdown>
                 ) : (
-                  issue.assignee
+                  issue.assignee?.name || 'Not Assigned'
                 )}
               </DetailItem>
               <DetailItem>
-                <strong>Reporter:</strong> {issue.reporter}
+                <strong>Reporter:</strong> {issue.raisedBy?.name || 'Unknown'}
               </DetailItem>
               <DetailItem>
                 <strong>Status:</strong>{' '}
@@ -616,14 +617,14 @@ const IssueModal = ({ issue, onClose }) => {
                     </option>
                   </StatusDropdown>
                 ) : (
-                  issue.status
+                  issue?.status || ''
                 )}
               </DetailItem>
               <DetailItem>
-                <strong>Created:</strong> {issue.createdAt}
+                <strong>Created:</strong> {issue?.createdAt || ''}
               </DetailItem>
               <DetailItem>
-                <strong>Updated:</strong> {issue.updatedAt}
+                <strong>Updated:</strong> {issue?.updatedAt || ''}
               </DetailItem>
             </DetailsList>
             {isManagerOrSupport && (

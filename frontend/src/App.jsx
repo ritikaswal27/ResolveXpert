@@ -5,6 +5,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import LoginPage from './pages/LoginPage';
@@ -21,7 +22,7 @@ const App = () => {
       <AuthProvider>
         <Router>
           <GlobalStyles />
-          <Navbar />
+          <ConditionalNavbar />
           <Routes>
             <Route path='/' element={<LoginPage />} />
             <Route path='/login' element={<LoginPage />} />
@@ -49,7 +50,6 @@ const App = () => {
                 </PrivateRouteForRole>
               }
             />
-            {/* Add other roles' dashboards as needed */}
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
         </Router>
@@ -58,18 +58,28 @@ const App = () => {
   );
 };
 
-// Private route component to protect dashboard routes
+// Component to conditionally render Navbar
+const ConditionalNavbar = () => {
+  const location = useLocation();
+  const hideNavbarPaths = ['/', '/login'];
+
+  return !hideNavbarPaths.includes(location.pathname) ? <Navbar /> : null;
+};
+
 const PrivateRoute = ({ children }) => {
-  const { user } = useAuth();
-  console.log('hello');
-  console.log(user);
+  const { user, loading } = useAuth();
+  if (loading) return null;
   return user ? children : <Navigate to='/login' replace />;
 };
 
 const PrivateRouteForRole = ({ children, role }) => {
-  const { user } = useAuth();
-  console.log('hiiiii');
-  return user?.role === role ? children : <Navigate to='/login' replace />;
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user && user.role === role ? (
+    children
+  ) : (
+    <Navigate to='/login' replace />
+  );
 };
 
 export default App;

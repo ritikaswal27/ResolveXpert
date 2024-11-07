@@ -7,6 +7,7 @@ import { dashboardReducer, initialState } from '../reducers/dashboardReducer';
 import { useAuth } from '../context/AuthContext';
 import CreateIssueModal from '../components/dashboard/CreateIssueModal';
 import NewIssueTypeModal from '../components/dashboard/NewIssueTypeModal';
+import { Navigate } from 'react-router-dom';
 
 const DashboardPage = () => {
   const { user, url } = useAuth();
@@ -33,15 +34,11 @@ const DashboardPage = () => {
           }).then((res) => res.json()),
         ]);
         {
-          console.log(
-            'dashboard page fetch dropdown',
-            categories.issueType,
-            assignees
-          );
+          console.log('dashboard page fetch dropdown', categories, assignees);
         }
         dispatch({
           type: 'SET_DATA',
-          payload: { categories, assignees },
+          payload: { categories: categories.issueType, assignees },
         });
         {
           console.log('dashboard page dropdown after setting data', state);
@@ -73,7 +70,7 @@ const DashboardPage = () => {
       });
       console.log('dashboard fetch request', query.toString());
       try {
-        const response = await fetch(`/api/issues?${query}`, {
+        const response = await fetch(`${url}/api/issues?${query}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         const data = await response.json();
@@ -81,7 +78,7 @@ const DashboardPage = () => {
           'data received in the dashboard after fteching data on initial render',
           data
         );
-        dispatch({ type: 'SET_DATA', payload: { issues: data.issues } });
+        dispatch({ type: 'SET_DATA', payload: { issues: data } }); // idhar se aara h issue
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
@@ -117,6 +114,8 @@ const DashboardPage = () => {
     dispatch({ type: 'ADD_ISSUE_TYPE', payload: newIssueType });
   };
 
+  if (!user) return <Navigate to={'/login'} />;
+
   return (
     <Container>
       <GreetingSection>
@@ -137,7 +136,7 @@ const DashboardPage = () => {
         />
         <MainContent sidebarVisible={true}>
           <TopSection>
-            <IssuesFound>{state.data.issues.length} Issues Found</IssuesFound>
+            <IssuesFound>{state.data.issues?.length} Issues Found</IssuesFound>
             <SortSection>
               <Label>Sort By</Label>
               <Select

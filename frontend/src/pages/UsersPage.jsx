@@ -15,21 +15,23 @@ const GetAllUsersPage = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [state.userFilters, state.sort, state.pagination]);
+  }, [state.userFilters, state.userSort, state.pagination]);
 
   const fetchUsers = async () => {
     const { role, gender } = state.userFilters;
-    const { field, order } = state.sort;
+    const { field, order } = state.userSort;
     const { page, limit } = state.pagination;
 
     const query = new URLSearchParams({
-      role: role !== 'employee' ? role : 'employee',
-      gender: gender !== 'male' ? gender : 'male',
+      role: role !== 'all' ? role : 'all',
+      gender: gender !== 'all' ? gender : 'all',
       sortBy: field,
       order,
       page,
       limit,
     }).toString();
+
+    console.log('users page intial fetch', query.toString());
 
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
@@ -37,7 +39,11 @@ const GetAllUsersPage = () => {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await response.json();
-      dispatch({ type: 'SET_DATA', payload: { users: data.users } });
+      console.log("user's page data fetched ", data);
+      dispatch({
+        type: 'SET_DATA_FOR_USERS',
+        payload: { users: data.content },
+      });
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
@@ -47,7 +53,7 @@ const GetAllUsersPage = () => {
 
   const handleSortChange = (e) => {
     const [field, order] = e.target.value.split('-');
-    dispatch({ type: 'SET_SORT', payload: { field, order } });
+    dispatch({ type: 'SET_USER_SORT', payload: { field, order } });
   };
 
   const handleFilterChange = (field, value) => {
@@ -63,7 +69,7 @@ const GetAllUsersPage = () => {
     setSearch('');
     dispatch({
       type: 'SET_USER_FILTER',
-      payload: { role: 'employee', gender: 'male', search: '' },
+      payload: { role: 'all', gender: 'all', search: '' },
     });
   };
 
@@ -92,7 +98,7 @@ const GetAllUsersPage = () => {
               value={state.userFilters.role}
               onChange={(e) => handleFilterChange('role', e.target.value)}
             >
-              <option value='employee'>All</option>
+              <option value='all'>All</option>
               {state.data.roles?.map((r, index) => (
                 <option key={index} value={r}>
                   {r}
@@ -106,7 +112,7 @@ const GetAllUsersPage = () => {
               value={state.userFilters.gender}
               onChange={(e) => handleFilterChange('gender', e.target.value)}
             >
-              <option value='male'>All</option>
+              <option value='all'>All</option>
               {state.data.genders?.map((g, index) => (
                 <option key={index} value={g}>
                   {g}
@@ -126,7 +132,7 @@ const GetAllUsersPage = () => {
             <SortSection>
               <Label style={{}}>Sort By</Label>
               <Select
-                value={`${state.sort.field}-${state.sort.order}`}
+                value={`${state.userSort.field}-${state.userSort.order}`}
                 onChange={handleSortChange}
               >
                 <option value='doj-asc'>Date of Joining (Asc)</option>

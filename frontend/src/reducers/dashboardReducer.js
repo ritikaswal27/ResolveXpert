@@ -17,16 +17,20 @@ const initialState = {
   },
   userFilters: {
     // New filters specific to Users Page
-    role: 'employee',
-    gender: 'male',
+    role: 'all',
+    gender: 'all',
     search: '',
   },
   sort: {
     field: 'createdAt',
     order: 'asc',
   },
+  userSort: {
+    field: 'doj',
+    order: 'asc',
+  },
   pagination: {
-    page: 1,
+    page: 0,
     limit: 10,
   },
   data: {
@@ -162,18 +166,30 @@ const dashboardReducer = (state, action) => {
       };
     case 'SET_SORT':
       return { ...state, sort: action.payload };
+    case 'SET_USER_SORT':
+      return { ...state, userSort: action.payload };
     case 'SET_PAGINATION':
       return {
         ...state,
         pagination: { ...state.pagination, ...action.payload },
       };
     case 'SET_DATA':
+      console.log(action);
       return {
         ...state,
         data: {
           ...state.data,
-          categories: [...action.payload.categories.issueType],
-          assignees: [...action.payload.assignees],
+          ...action.payload,
+        },
+      };
+    case 'SET_DATA_ISSUES':
+    case 'SET_DATA_FOR_USERS':
+      console.log('set data for user dispatch', action.payload);
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          users: [...action.payload.users],
         },
       };
     case 'SET_LOADING':

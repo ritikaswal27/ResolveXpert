@@ -17,8 +17,8 @@ const IssueTable = ({ issues, pagination, onPageChange, onIssueClick }) => {
           </tr>
         </thead>
         <tbody>
-          {issues && issues.length > 0 ? (
-            issues.map((issue, index) => (
+          {issues && issues?.length > 0 ? (
+            issues?.map((issue, index) => (
               <tr key={index}>
                 <td>{issue.type}</td>
                 <td>
@@ -29,8 +29,8 @@ const IssueTable = ({ issues, pagination, onPageChange, onIssueClick }) => {
                     {issue.status}
                   </StatusBadge>
                 </td>
-                <td>{issue.assignee}</td>
-                <td>{issue.reporter}</td>
+                <td>{issue.assignee?.name || 'Not Assigned'}</td>
+                <td>{issue.raisedBy.name}</td>
                 <td>{issue.created}</td>
                 <td>{issue.updated}</td>
               </tr>

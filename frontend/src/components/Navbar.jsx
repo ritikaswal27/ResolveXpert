@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { FaSearch, FaBell, FaUserCircle } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logoImage from '../assets/logo.png';
-import ProfileModal from './ProfileModal'; // Import ProfileModal component
+import ProfileModal from './ProfileModal';
+import { useAuth } from '../context/AuthContext';
 
 const NavbarContainer = styled.nav`
   display: flex;
@@ -89,12 +90,14 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // Profile modal state
-  const [profileData, setProfileData] = useState(null); // Profile data state
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileData, setProfileData] = useState(null);
   const isLoginOrStartingPage =
     location.pathname === '/login' || location.pathname === '/';
 
-  const userRole = 'manager'; // Sample role (replace with actual role logic)
+  const { user, url } = useAuth();
+
+  const userRole = user?.role;
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -102,22 +105,15 @@ const Navbar = () => {
     setIsDropdownOpen(false);
     if (option === 'profile') {
       setIsProfileModalOpen(true);
-      // try {
-      //   const response = await fetch(`/api/users/EMP011`); // Replace EMP011 with dynamic user ID
-      //   const data = await response.json();
-      //   setProfileData(data);
-      // } catch (error) {
-      //   console.error('Error fetching profile data:', error);
-      // }
-      setProfileData({
-        empId: 'EMP011',
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        role: 'Employee',
-        gender: 'male',
-        dateOfBirth: '1990-07-15',
-        dateOfJoining: '2022-01-20',
-      });
+      try {
+        const response = await fetch(`${url}/api/users/${user.empId}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const data = await response.json();
+        setProfileData(data);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
     } else if (option === 'users' && userRole === 'manager') {
       navigate('/get-all-users');
     }
