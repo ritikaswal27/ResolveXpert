@@ -9,64 +9,71 @@ import CreateIssueModal from '../components/dashboard/CreateIssueModal';
 import NewIssueTypeModal from '../components/dashboard/NewIssueTypeModal';
 
 const DashboardPage = () => {
-  const { user } = useAuth();
+  const { user, url } = useAuth();
   const [selectedIssueId, setSelectedIssueId] = useState(null);
   const [state, dispatch] = useReducer(dashboardReducer, initialState);
   const [isIssueTypeModalOpen, setIsIssueTypeModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch initial data for categories, statuses, and assignees
-  // useEffect(() => {
-  //   const fetchDropdownOptions = async () => {
-  //     try {
-  //       dispatch({ type: 'SET_LOADING', payload: true });
-  //       const [categories, statuses, assignees] = await Promise.all([
-  //         fetch('/api/categories').then((res) => res.json()),
-  //         fetch('/api/statuses').then((res) => res.json()),
-  //         fetch('/api/assignees').then((res) => res.json()),
-  //       ]);
-  //       dispatch({
-  //         type: 'SET_DATA',
-  //         payload: { categories, statuses, assignees },
-  //       });
-  //     } finally {
-  //       dispatch({ type: 'SET_LOADING', payload: false });
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchDropdownOptions = async () => {
+      try {
+        dispatch({ type: 'SET_LOADING', payload: true });
+        const [categories, statuses, assignees] = await Promise.all([
+          fetch(`${url}/api/categories`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }).then((res) => res.json()),
+          fetch(`${url}/api/statuses`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }).then((res) => res.json()),
+          fetch(`${url}/api/assignees`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }).then((res) => res.json()),
+        ]);
+        dispatch({
+          type: 'SET_DATA',
+          payload: { categories, statuses, assignees },
+        });
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
 
-  //   fetchDropdownOptions();
-  // }, []);
+    fetchDropdownOptions();
+  }, []);
 
   // Fetch issues when filter, sort, or pagination changes
-  // useEffect(() => {
-  //   const fetchIssues = async () => {
-  //     dispatch({ type: 'SET_LOADING', payload: true });
-  //     const { page, limit } = state.pagination;
-  //     const { category, status, assignee, search } = state.filter;
-  //     const { field, order } = state.sort;
+  useEffect(() => {
+    const fetchIssues = async () => {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      const { page, limit } = state.pagination;
+      const { category, status, assignee } = state.filter;
+      const { field, order } = state.sort;
 
-  //     const query = new URLSearchParams({
-  //       page,
-  //       limit,
-  //       category: category !== 'all' ? category : 'all',
-  //       status: status !== 'all' ? status : 'all',
-  //       assignee: assignee !== 'all' ? assignee : 'all',
-  //       sortBy: field,
-  //       sortOrder: order,
-  //       search,
-  //     });
+      const query = new URLSearchParams({
+        page,
+        limit,
+        category: category !== 'all' ? category : 'all',
+        status: status !== 'all' ? status : 'all',
+        assignee: assignee !== 'all' ? assignee : 'all',
+        sortBy: field,
+        sortOrder: order,
+      });
 
-  //     try {
-  //       const response = await fetch(`/api/issues?${query}`);
-  //       const data = await response.json();
-  //       dispatch({ type: 'SET_DATA', payload: { issues: data.issues } });
-  //     } finally {
-  //       dispatch({ type: 'SET_LOADING', payload: false });
-  //     }
-  //   };
+      try {
+        const response = await fetch(`/api/issues?${query}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const data = await response.json();
+        dispatch({ type: 'SET_DATA', payload: { issues: data.issues } });
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
 
-  //   fetchIssues();
-  // }, [state.filter, state.sort, state.pagination]);
+    fetchIssues();
+  }, [state.filter, state.sort, state.pagination]);
 
   // Add a new Issue modal ---------------------------------------
   const handleCreateClick = () => {

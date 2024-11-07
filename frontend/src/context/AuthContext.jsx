@@ -5,15 +5,21 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({ name: 'Ritik', role: 'manager' });
+  const [user, setUser] = useState(null);
+  const url = 'http://localhost:8088';
 
   // Login function
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     try {
       // API call for authentication
-      const response = await axios.post('/api/login', { email, password });
-      setUser(response.data.user); // Assuming response contains user data
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      const response = await axios.post(`${url}/api/login`, {
+        username,
+        password,
+      });
+      console.log(response);
+      console.log(response.data);
+      setUser(response.data); // Assuming response contains user data
+      localStorage.setItem('user', JSON.stringify(response.data));
     } catch (error) {
       console.error('Login failed:', error);
       throw error; // Rethrow to handle in LoginPage
@@ -22,6 +28,7 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = () => {
+    console.log('logout');
     setUser(null);
     localStorage.removeItem('user');
   };
@@ -35,7 +42,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, url }}>
       {children}
     </AuthContext.Provider>
   );

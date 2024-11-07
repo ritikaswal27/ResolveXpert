@@ -4,11 +4,13 @@ import { IssueContext } from '../context/IssueContext';
 import styled from 'styled-components';
 import Pagination from '../components/Pagination';
 import UserDetailModal from '../components/users/UserDetailModal';
+import { useAuth } from '../context/AuthContext';
 
 const GetAllUsersPage = () => {
   const { state, dispatch } = useContext(IssueContext);
   const [search, setSearch] = useState('');
-  const [selectedUser, setSelectedUser] = useState(null); // For modal
+  const [selectedUser, setSelectedUser] = useState(null);
+  const { user, url } = useAuth();
 
   useEffect(() => {
     fetchUsers();
@@ -30,7 +32,7 @@ const GetAllUsersPage = () => {
 
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await fetch(`/api/users?${query}`);
+      const response = await fetch(`${url}/api/users?${query}`);
       const data = await response.json();
       dispatch({ type: 'SET_DATA', payload: { users: data.users } });
     } catch (error) {
@@ -54,8 +56,16 @@ const GetAllUsersPage = () => {
     handleFilterChange('search', e.target.value);
   };
 
+  const handleClearFilters = () => {
+    setSearch(''); // Clear search input
+    dispatch({
+      type: 'SET_USER_FILTER',
+      payload: { role: 'all', gender: 'all', search: '' },
+    });
+  };
+
   const handleUserClick = (empId) => {
-    setSelectedUser(empId); // Open modal with selected user details
+    setSelectedUser(empId);
   };
 
   return (
@@ -63,30 +73,6 @@ const GetAllUsersPage = () => {
       <GreetingSection>Users Management</GreetingSection>
       <DashboardContainer>
         <FilterBarContainer>
-          <FilterSection>
-            <Label>Role</Label>
-            <Select
-              value={state.userFilters.role}
-              onChange={(e) => handleFilterChange('role', e.target.value)}
-            >
-              <option value='All Roles'>All</option>
-              <option value='Employee'>Employee</option>
-              <option value='Manager'>Manager</option>
-            </Select>
-          </FilterSection>
-
-          <FilterSection>
-            <Label>Gender</Label>
-            <Select
-              value={state.userFilters.gender}
-              onChange={(e) => handleFilterChange('gender', e.target.value)}
-            >
-              <option value='All Genders'>All Genders</option>
-              <option value='male'>Male</option>
-              <option value='female'>Female</option>
-            </Select>
-          </FilterSection>
-
           <SearchSection>
             <SearchInput
               type='text'
@@ -95,20 +81,53 @@ const GetAllUsersPage = () => {
               onChange={handleSearchChange}
             />
           </SearchSection>
-
-          <SortSection>
-            <Label>Sort By</Label>
+          <FilterSection>
+            <Label>Role</Label>
             <Select
-              value={`${state.sort.field}-${state.sort.order}`}
-              onChange={handleSortChange}
+              value={state.userFilters.role}
+              onChange={(e) => handleFilterChange('role', e.target.value)}
             >
-              <option value='dateOfJoining-asc'>Date of Joining (Asc)</option>
-              <option value='dateOfJoining-desc'>Date of Joining (Desc)</option>
+              <option value='all'>All</option>
+              {state.userFilters.role?.map((r, index) => (
+                <option key={index} value={r}>
+                  {r}
+                </option>
+              ))}
             </Select>
-          </SortSection>
+          </FilterSection>
+          <FilterSection>
+            <Label>Gender</Label>
+            <Select
+              value={state.userFilters.gender}
+              onChange={(e) => handleFilterChange('gender', e.target.value)}
+            >
+              <option value='all'>All</option>
+              {state.userFilters.gender?.map((g, index) => (
+                <option key={index} value={g}>
+                  {g}
+                </option>
+              ))}
+            </Select>
+          </FilterSection>
+          <ClearFiltersButton onClick={handleClearFilters}>
+            Clear Filters
+          </ClearFiltersButton>
         </FilterBarContainer>
 
         <MainContent>
+          <UsersFoundSection>
+            <UsersCount>{state.data.users.length} Users Found</UsersCount>
+            <SortSection>
+              <Label style={{}}>Sort By</Label>
+              <Select
+                value={`${state.sort.field}-${state.sort.order}`}
+                onChange={handleSortChange}
+              >
+                <option value='doj-asc'>Date of Joining (Asc)</option>
+                <option value='doj-desc'>Date of Joining (Desc)</option>
+              </Select>
+            </SortSection>
+          </UsersFoundSection>
           <UsersTable>
             <thead>
               <tr>
@@ -161,7 +180,7 @@ const GetAllUsersPage = () => {
 
 export default GetAllUsersPage;
 
-// Additional styled components
+// Styled Components
 const NameLink = styled.span`
   color: #007bff;
   cursor: pointer;
@@ -229,8 +248,26 @@ const SearchInput = styled.input`
   font-size: 16px;
 `;
 
+const ClearFiltersButton = styled.button`
+  width: 100%;
+  padding: 10px;
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #e60000;
+  }
+`;
+
 const SortSection = styled.div`
-  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 const MainContent = styled.div`
@@ -240,6 +277,18 @@ const MainContent = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
+`;
+
+const UsersFoundSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const UsersCount = styled.h2`
+  font-size: 18px;
+  font-weight: bold;
 `;
 
 const UsersTable = styled.table`

@@ -1,45 +1,50 @@
 // src/pages/LoginPage.js
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      await login(username, password);
       navigate('/dashboard');
     } catch (error) {
       console.error('Login failed', error);
     }
   };
 
+  if (user) {
+    return <Navigate to={'/dashboard'} />;
+  }
+
   return (
     <Container>
       <LoginBox>
         <Title>Welcome Back</Title>
-        <Subtitle>Please log in to access your dashboard and manage issues efficiently.</Subtitle>
+        <Subtitle>
+          Please log in to access your dashboard and manage issues efficiently.
+        </Subtitle>
         <Form onSubmit={handleSubmit}>
           <Input
-            type="email"
-            placeholder="Enter your AID or company email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type='username'
+            placeholder='Enter your AID or company email'
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <Input
-            type="password"
-            placeholder="Enter your password"
+            type='password'
+            placeholder='Enter your password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <LoginButton type="submit">Log In</LoginButton>
+          <LoginButton type='submit'>Log In</LoginButton>
         </Form>
       </LoginBox>
     </Container>
@@ -70,7 +75,7 @@ const LoginBox = styled.div`
   border-radius: 5px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   text-align: center;
-  margin-top: -15px; 
+  margin-top: -15px;
 `;
 
 const Title = styled.h1`

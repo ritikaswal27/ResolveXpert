@@ -33,7 +33,7 @@ const Sidebar = ({
           onChange={(e) => onFilterChange({ category: e.target.value })}
         >
           <option value='all'>All</option>
-          {categories.map((category) => (
+          {categories?.map((category) => (
             <option key={category.id} value={category}>
               {category}
             </option>
@@ -64,8 +64,8 @@ const Sidebar = ({
         >
           <option value='all'>All</option>
           {assignees.map((assignee) => (
-            <option key={assignee.id} value={assignee}>
-              {assignee}
+            <option key={assignee.id} value={assignee.name}>
+              {assignee.name}
             </option>
           ))}
         </Select>

@@ -16,7 +16,6 @@ import { IssueProvider } from './context/IssueContext';
 import GetAllUsersPage from './pages/UsersPage';
 
 const App = () => {
-  console.log();
   return (
     <IssueProvider>
       <AuthProvider>
@@ -37,17 +36,17 @@ const App = () => {
             <Route
               path='/approvals'
               element={
-                <PrivateRoute>
+                <PrivateRouteForRole role='manager'>
                   <IssueApprovalPage />
-                </PrivateRoute>
+                </PrivateRouteForRole>
               }
             />
             <Route
               path='/users'
               element={
-                <PrivateRoute>
+                <PrivateRouteForRole role='manager'>
                   <GetAllUsersPage />
-                </PrivateRoute>
+                </PrivateRouteForRole>
               }
             />
             {/* Add other roles' dashboards as needed */}
@@ -62,8 +61,15 @@ const App = () => {
 // Private route component to protect dashboard routes
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
+  console.log('hello');
   console.log(user);
   return user ? children : <Navigate to='/login' replace />;
+};
+
+const PrivateRouteForRole = ({ children, role }) => {
+  const { user } = useAuth();
+  console.log('hiiiii');
+  return user?.role === role ? children : <Navigate to='/login' replace />;
 };
 
 export default App;
