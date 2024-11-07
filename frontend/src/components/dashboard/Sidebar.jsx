@@ -32,6 +32,7 @@ const Sidebar = ({
           value={filter.category}
           onChange={(e) => onFilterChange({ category: e.target.value })}
         >
+          {console.log('sidebar', categories)}
           <option value='all'>All</option>
           {categories?.map((category) => (
             <option key={category.id} value={category}>

@@ -107,11 +107,11 @@ const StatusBadge = styled.span.attrs((props) => ({
   font-weight: bold;
   background-color: ${(props) => {
     switch (props.status) {
-      case 'To Do':
+      case 'not_accepted':
         return '#f39c12';
-      case 'In Progress':
+      case 'in_progress':
         return '#3498db';
-      case 'Done':
+      case 'resolved':
         return '#2ecc71';
       default:
         return '#bdc3c7';

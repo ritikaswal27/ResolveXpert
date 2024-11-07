@@ -6,6 +6,7 @@ import ApprovalIssueTable from '../components/issueApproval/ApprovalIssueTable';
 import Pagination from '../components/Pagination';
 import styled from 'styled-components';
 import IssueDetailModal from '../components/issueApproval/ApprovalIssueDetailModal';
+import { useAuth } from '../context/AuthContext';
 
 export const approveOrRejectIssue = async (issueId, status, comment) => {
   try {
@@ -37,6 +38,7 @@ const IssueApprovalPage = () => {
   const [search, setSearch] = useState('');
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [comment, setComment] = useState('');
+  const { user } = useAuth();
 
   useEffect(() => {
     async function loadEmployees() {
@@ -117,7 +119,9 @@ const IssueApprovalPage = () => {
 
   return (
     <PageContainer>
-      <GreetingSection>Hello, Manager!</GreetingSection>
+      <GreetingSection>
+        Hello, {user ? user.username?.split(' ')[0] : 'User'}!
+      </GreetingSection>
       <DashboardContainer>
         <FilterBar />
 

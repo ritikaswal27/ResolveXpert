@@ -20,21 +20,32 @@ const DashboardPage = () => {
     const fetchDropdownOptions = async () => {
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
-        const [categories, statuses, assignees] = await Promise.all([
+        const [categories, assignees] = await Promise.all([
           fetch(`${url}/api/categories`, {
             headers: { Authorization: `Bearer ${user.token}` },
           }).then((res) => res.json()),
-          fetch(`${url}/api/statuses`, {
-            headers: { Authorization: `Bearer ${user.token}` },
-          }).then((res) => res.json()),
+
+          // fetch(`${url}/api/statuses`, {
+          //   headers: { Authorization: `Bearer ${user.token}` },
+          // }).then((res) => res.json()),
           fetch(`${url}/api/assignees`, {
             headers: { Authorization: `Bearer ${user.token}` },
           }).then((res) => res.json()),
         ]);
+        {
+          console.log(
+            'dashboard page fetch dropdown',
+            categories.issueType,
+            assignees
+          );
+        }
         dispatch({
           type: 'SET_DATA',
-          payload: { categories, statuses, assignees },
+          payload: { categories, assignees },
         });
+        {
+          console.log('dashboard page dropdown after setting data', state);
+        }
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
@@ -60,12 +71,16 @@ const DashboardPage = () => {
         sortBy: field,
         sortOrder: order,
       });
-
+      console.log('dashboard fetch request', query.toString());
       try {
         const response = await fetch(`/api/issues?${query}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         const data = await response.json();
+        console.log(
+          'data received in the dashboard after fteching data on initial render',
+          data
+        );
         dispatch({ type: 'SET_DATA', payload: { issues: data.issues } });
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
@@ -105,7 +120,7 @@ const DashboardPage = () => {
   return (
     <Container>
       <GreetingSection>
-        Hello, {user ? user.name?.split(' ')[0] : 'User'}!
+        Hello, {user ? user.username?.split(' ')[0] : 'User'}!
       </GreetingSection>
       <DashboardContainer>
         <Sidebar

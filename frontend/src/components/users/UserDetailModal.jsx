@@ -167,7 +167,7 @@ const UserDetailModal = ({ empId, onClose }) => {
         <ModalContent>
           <strong>Role:</strong>
           <Select value={selectedRole} onChange={handleRoleChange}>
-            {state.userFilters.role
+            {state.roles
               ?.filter((role) => role !== userData.role) // Exclude current role
               .map((role) => (
                 <option key={role} value={role}>

@@ -197,10 +197,10 @@ export default function ApprovalIssueTable({
         {currentIssues.length > 0 ? (
           currentIssues.map((issue) => (
             <TableRow key={issue.issueId}>
-              <TableCell>{issue.type}</TableCell>
+              <TableCell>{issue.issueType}</TableCell>
               <TableCell>
                 <TitleLink onClick={() => onIssueClick(issue)}>
-                  {issue.title}
+                  {issue.issueTitle}
                 </TitleLink>
               </TableCell>
               <TableCell>{issue.raisedBy}</TableCell>

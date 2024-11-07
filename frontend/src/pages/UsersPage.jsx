@@ -11,6 +11,7 @@ const GetAllUsersPage = () => {
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const { user, url } = useAuth();
+  console.log(state);
 
   useEffect(() => {
     fetchUsers();
@@ -22,8 +23,8 @@ const GetAllUsersPage = () => {
     const { page, limit } = state.pagination;
 
     const query = new URLSearchParams({
-      role: role !== 'all' ? role : 'all',
-      gender: gender !== 'all' ? gender : 'all',
+      role: role !== 'employee' ? role : 'employee',
+      gender: gender !== 'male' ? gender : 'male',
       sortBy: field,
       order,
       page,
@@ -32,7 +33,9 @@ const GetAllUsersPage = () => {
 
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await fetch(`${url}/api/users?${query}`);
+      const response = await fetch(`${url}/api/users?${query}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
       const data = await response.json();
       dispatch({ type: 'SET_DATA', payload: { users: data.users } });
     } catch (error) {
@@ -57,10 +60,10 @@ const GetAllUsersPage = () => {
   };
 
   const handleClearFilters = () => {
-    setSearch(''); // Clear search input
+    setSearch('');
     dispatch({
       type: 'SET_USER_FILTER',
-      payload: { role: 'all', gender: 'all', search: '' },
+      payload: { role: 'employee', gender: 'male', search: '' },
     });
   };
 
@@ -70,7 +73,9 @@ const GetAllUsersPage = () => {
 
   return (
     <PageContainer>
-      <GreetingSection>Users Management</GreetingSection>
+      <GreetingSection>
+        Hello, {user ? user.username?.split(' ')[0] : 'User'}!
+      </GreetingSection>
       <DashboardContainer>
         <FilterBarContainer>
           <SearchSection>
@@ -87,8 +92,8 @@ const GetAllUsersPage = () => {
               value={state.userFilters.role}
               onChange={(e) => handleFilterChange('role', e.target.value)}
             >
-              <option value='all'>All</option>
-              {state.userFilters.role?.map((r, index) => (
+              <option value='employee'>All</option>
+              {state.data.roles?.map((r, index) => (
                 <option key={index} value={r}>
                   {r}
                 </option>
@@ -101,8 +106,8 @@ const GetAllUsersPage = () => {
               value={state.userFilters.gender}
               onChange={(e) => handleFilterChange('gender', e.target.value)}
             >
-              <option value='all'>All</option>
-              {state.userFilters.gender?.map((g, index) => (
+              <option value='male'>All</option>
+              {state.data.genders?.map((g, index) => (
                 <option key={index} value={g}>
                   {g}
                 </option>
@@ -116,7 +121,8 @@ const GetAllUsersPage = () => {
 
         <MainContent>
           <UsersFoundSection>
-            <UsersCount>{state.data.users.length} Users Found</UsersCount>
+            {console.log('users page length of users', state.data.users.length)}
+            <UsersCount>{state.data.users?.length} Users Found</UsersCount>
             <SortSection>
               <Label style={{}}>Sort By</Label>
               <Select
@@ -141,7 +147,7 @@ const GetAllUsersPage = () => {
             </thead>
             <tbody>
               {state.data.users.length > 0 ? (
-                state.data.users.map((user) => (
+                state.data.users.map((user, index) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.empId}</TableCell>
                     <TableCell>

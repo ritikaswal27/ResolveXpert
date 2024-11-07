@@ -21,7 +21,7 @@ const LoginPage = () => {
   };
 
   if (user) {
-    return <Navigate to={'/dashboard'} />;
+    return <Navigate to={'/users'} />;
   }
 
   return (
@@ -65,7 +65,7 @@ export default LoginPage;
 // Styled Components
 const Container = styled.div`
   display: flex;
-  height: 100vh;
+  height: 90vh;
   font-family: 'Roboto', sans-serif;
 `;
 
