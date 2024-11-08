@@ -464,14 +464,15 @@ import styled from 'styled-components';
 import { useAuth } from '../../context/AuthContext';
 import { initialState } from '../../reducers/dashboardReducer';
 
-const IssueModal = ({ issue, onClose }) => {
+const IssueModal = ({ issue, onClose, assignees }) => {
   if (!issue) return null;
+
   const { user } = useAuth();
   const [remarks, setRemarks] = useState(issue.remarks || []);
   const [newComment, setNewComment] = useState('');
   const [editableStatus, setEditableStatus] = useState(issue.status || '');
-  const [editableAssignee, setEditableAssignee] = useState(
-    issue.assignee?.name || ''
+  const [editableAssigneeId, setEditableAssigneeId] = useState(
+    issue.assignee?.id
   );
   const isManagerOrSupport = user.role === 'manager' || user.role === 'support';
   const isManager = user.role === 'manager';
@@ -479,7 +480,7 @@ const IssueModal = ({ issue, onClose }) => {
   // Handle Update
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`/api/issues/${issue.id}`, {
+      const response = await fetch(`/api/issues/${issue.issueId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -488,7 +489,7 @@ const IssueModal = ({ issue, onClose }) => {
         body: JSON.stringify({
           status: editableStatus,
           remarks: remarks,
-          assignee: editableAssignee,
+          assigneeId: editableAssigneeId,
         }),
       });
 
@@ -496,7 +497,7 @@ const IssueModal = ({ issue, onClose }) => {
         const updatedIssue = await response.json();
         setRemarks(updatedIssue.remarks);
         setEditableStatus(updatedIssue.status);
-        setEditableAssignee(updatedIssue.assignee);
+        setEditableAssigneeId(updatedIssue.assignee?.id);
         alert('Issue updated successfully');
       } else {
         alert('Failed to update issue');
@@ -521,7 +522,7 @@ const IssueModal = ({ issue, onClose }) => {
 
   // Assignee dropdown change handler
   const handleAssigneeChange = (event) => {
-    setEditableAssignee(event.target.value);
+    setEditableAssigneeId(event.target.value);
   };
 
   return (
@@ -574,22 +575,29 @@ const IssueModal = ({ issue, onClose }) => {
               <DetailItem>
                 <strong>Assignee:</strong>{' '}
                 {isManager ? (
-                  <StatusDropdown
-                    value={editableAssignee}
-                    onChange={handleAssigneeChange}
-                  >
-                    {/* Populate dropdown options, excluding the current assignee */}
-                    {initialState.data?.assignees
-                      ?.filter((assignee) => assignee !== editableAssignee)
-                      .map((assignee, index) => (
-                        <option key={index} value={assignee?.name}>
-                          {assignee?.name || 'Not found'}
+                  <>
+                    <StatusDropdown
+                      defaultValue={editableAssigneeId}
+                      onChange={handleAssigneeChange}
+                    >
+                      {
+                        <option value={editableAssigneeId} key='default'>
+                          {assignees.find(
+                            (assignee) => assignee?.id === editableAssigneeId
+                          )?.[0]?.name || 'Not Assigned'}
                         </option>
-                      ))}
-                    <option value={editableAssignee} key='default' disabled>
-                      {editableAssignee || ''}
-                    </option>
-                  </StatusDropdown>
+                      }
+                      {assignees
+                        ?.filter(
+                          (assignee) => assignee?.id !== editableAssigneeId
+                        )
+                        .map((assignee, index) => (
+                          <option key={index} value={assignee?.id}>
+                            {assignee?.name || 'Not found'}
+                          </option>
+                        ))}
+                    </StatusDropdown>
+                  </>
                 ) : (
                   issue.assignee?.name || 'Not Assigned'
                 )}

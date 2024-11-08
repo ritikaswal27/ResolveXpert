@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { useAuth } from '../../context/AuthContext';
 
 const NewIssueTypeModal = ({ onClose, onIssueTypeCreated }) => {
+  const { user, url } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     auto_accept: 'false',
@@ -24,7 +26,9 @@ const NewIssueTypeModal = ({ onClose, onIssueTypeCreated }) => {
     setError(null);
 
     try {
-      const response = await axios.put('/api/issues/type', formData);
+      const response = await axios.put(`${url}/api/issues/type`, formData, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
       onIssueTypeCreated(response.data); // Pass new issue type data back to parent
       onClose(); // Close modal on success
     } catch (err) {

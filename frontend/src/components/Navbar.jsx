@@ -95,7 +95,7 @@ const Navbar = () => {
   const isLoginOrStartingPage =
     location.pathname === '/login' || location.pathname === '/';
 
-  const { user, url } = useAuth();
+  const { user, url, logout } = useAuth();
 
   const userRole = user?.role;
 
@@ -106,16 +106,35 @@ const Navbar = () => {
     if (option === 'profile') {
       setIsProfileModalOpen(true);
       try {
-        const response = await fetch(`${url}/api/users/${user.empId}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
+        const response = await fetch(
+          `${url}/api/users/{empId}?empId=${user.empId}`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }
+        );
         const data = await response.json();
         setProfileData(data);
       } catch (error) {
         console.error('Error fetching profile data:', error);
       }
     } else if (option === 'users' && userRole === 'manager') {
-      navigate('/get-all-users');
+      navigate('/users');
+    } else if (option === 'logout') {
+      // try {
+      // const response = await fetch(`${url}/api/users/logout`, {
+      //   headers: { Authorization: `Bearer ${user.token}` },
+      // });
+      // if (response.ok) {
+      logout();
+      navigate('/login');
+      //   } else {
+      //     console.error('logout failed');
+      //   }
+      // } catch (error) {
+      //   console.error('Error logging out:', error);
+      // }
+    } else if (option === 'approvals') {
+      navigate('/approvals');
     }
   };
 
@@ -150,6 +169,17 @@ const Navbar = () => {
                       Get All Users
                     </DropdownItem>
                   )}
+                  {userRole === 'employee' && (
+                    <DropdownItem
+                      onClick={() => handleOptionClick('approvals')}
+                    >
+                      Issue Approvals
+                    </DropdownItem>
+                  )}
+
+                  <DropdownItem onClick={() => handleOptionClick('logout')}>
+                    Logout
+                  </DropdownItem>
                 </DropdownMenu>
               )}
             </div>

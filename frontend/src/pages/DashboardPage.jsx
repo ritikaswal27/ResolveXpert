@@ -78,7 +78,7 @@ const DashboardPage = () => {
           'data received in the dashboard after fteching data on initial render',
           data
         );
-        dispatch({ type: 'SET_DATA', payload: { issues: data } }); // idhar se aara h issue
+        dispatch({ type: 'SET_DATA', payload: { issues: data } });
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
@@ -192,6 +192,7 @@ const DashboardPage = () => {
       <IssueDetailModal
         issue={selectedIssueId}
         onClose={() => setSelectedIssueId(null)}
+        assignees={state.data.assignees}
       />
     </Container>
   );

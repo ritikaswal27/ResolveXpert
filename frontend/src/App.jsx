@@ -37,7 +37,7 @@ const App = () => {
             <Route
               path='/approvals'
               element={
-                <PrivateRouteForRole role='manager'>
+                <PrivateRouteForRole role='employee'>
                   <IssueApprovalPage />
                 </PrivateRouteForRole>
               }

@@ -45,7 +45,7 @@ const IssueTable = ({ issues, pagination, onPageChange, onIssueClick }) => {
       <Pagination>
         <button
           onClick={() => onPageChange(pagination.page - 1)}
-          disabled={pagination.page === 1}
+          disabled={pagination.page === 0}
         >
           Previous
         </button>

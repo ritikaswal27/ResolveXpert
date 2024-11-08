@@ -1,12 +1,39 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import {
   dashboardReducer,
   initialState,
 } from '../../reducers/dashboardReducer';
+import { useAuth } from '../../context/AuthContext';
 
 const NewIssueModal = ({ onClose, onIssueCreated }) => {
+  useEffect(() => {
+    const fetchDropdownOptions = async () => {
+      try {
+        dispatch({ type: 'SET_LOADING', payload: true });
+
+        const categories = await fetch(`${url}/api/categories`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }).then((res) => res.json());
+
+        console.log('dashboard page fetch dropdown', categories);
+
+        dispatch({
+          type: 'SET_DATA',
+          payload: { categories: categories.issueType },
+        });
+
+        console.log('dashboard page dropdown after setting data', state);
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
+
+    fetchDropdownOptions();
+  }, []);
+
+  const { user, url } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -15,6 +42,7 @@ const NewIssueModal = ({ onClose, onIssueCreated }) => {
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(dashboardReducer, initialState);
   const [error, setError] = useState(null);
+  console.log('create issue modal', state);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +56,9 @@ const NewIssueModal = ({ onClose, onIssueCreated }) => {
 
     try {
       console.log(formData);
-      const response = await axios.post('/api/issues', formData);
+      const response = await axios.post(`${url}/api/issues`, formData, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
       onIssueCreated(response.data); // Pass new issue data back to parent
       onClose(); // Close modal on success
     } catch (err) {

@@ -10,10 +10,10 @@ import { useAuth } from '../context/AuthContext';
 
 export const approveOrRejectIssue = async (issueId, status, comment) => {
   try {
-    const response = await fetch(`/api/approvalIssue/${issueId}`, {
+    const response = await fetch(`${url}/api/approvalIssue/${issueId}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${user.token}`,
       },
       body: JSON.stringify({
         status,
@@ -26,7 +26,7 @@ export const approveOrRejectIssue = async (issueId, status, comment) => {
     }
 
     const result = await response.json();
-    return result.message; // Assuming the API returns a success message in "message"
+    return result.message;
   } catch (error) {
     console.error('Error approving/rejecting issue:', error);
     throw error;
@@ -38,20 +38,47 @@ const IssueApprovalPage = () => {
   const [search, setSearch] = useState('');
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [comment, setComment] = useState('');
-  const { user } = useAuth();
+  const { user, url } = useAuth();
 
+  // useEffect(() => {
+  //   async function loadEmployees() {
+  //     try {
+  //       const response = await fetch(`${url}/api/employees`, {
+  //         headers: { Authorization: `Bearer ${user.token}` },
+  //       });
+  //       const employees = await response.json();
+  //       console.log('issue approval filter employees', employees);
+  //       dispatch({ type: 'SET_DATA', payload: { employees } });
+  //     } catch (error) {
+  //       console.error('Error fetching employees:', error);
+  //     }
+  //   }
+  //   loadEmployees();
+  // }, []);
   useEffect(() => {
-    async function loadEmployees() {
+    const fetchDropdownOptions = async () => {
       try {
-        const response = await fetch('/api/employees');
-        const employees = await response.json();
-        dispatch({ type: 'SET_DATA', payload: { employees } });
-      } catch (error) {
-        console.error('Error fetching employees:', error);
+        dispatch({ type: 'SET_LOADING', payload: true });
+
+        const categories = await fetch(`${url}/api/categories`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }).then((res) => res.json());
+
+        console.log('dashboard page fetch dropdown', categories);
+
+        dispatch({
+          type: 'SET_DATA',
+          payload: { categories: categories.issueType },
+        });
+
+        console.log('dashboard page dropdown after setting data', state);
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
       }
-    }
-    loadEmployees();
-  }, [dispatch]);
+    };
+
+    fetchDropdownOptions();
+  }, []);
 
   useEffect(() => {
     async function loadApprovalIssues() {
@@ -70,8 +97,12 @@ const IssueApprovalPage = () => {
 
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
-        const response = await fetch(`/api/approvalIssues?${query}`);
+        console.log('issue approval request query', query.toString());
+        const response = await fetch(`${url}/api/approvalIssues?${query}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
         const data = await response.json();
+        console.log('issue approvals data', data);
         dispatch({
           type: 'SET_DATA',
           payload: { approvalIssues: data.issues },
@@ -128,7 +159,7 @@ const IssueApprovalPage = () => {
         <MainContent>
           <IssuesFoundSection>
             <IssuesCount>
-              {state.data.approvalIssues.length} Issues Found
+              {state.data.approvalIssues?.length} Issues Found
             </IssuesCount>
             <SortSection>
               <Label>Sort By</Label>

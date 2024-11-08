@@ -110,11 +110,11 @@ const ProfileModal = ({ profileData, onClose }) => {
           </ModalContent>
           <ModalContent>
             <ContentLabel>Date of Birth:</ContentLabel>{' '}
-            {new Date(profileData.dateOfBirth).toLocaleDateString()}
+            {new Date(profileData.dob).toLocaleDateString()}
           </ModalContent>
           <ModalContent>
             <ContentLabel>Date of Joining:</ContentLabel>{' '}
-            {new Date(profileData.dateOfJoining).toLocaleDateString()}
+            {new Date(profileData.doj).toLocaleDateString()}
           </ModalContent>
         </DetailsContainer>
 
