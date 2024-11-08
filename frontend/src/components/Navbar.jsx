@@ -144,7 +144,9 @@ const Navbar = () => {
         <LogoContainer>
           <CompanyLogo src={logoImage} alt='Company Logo' />
           <Divider />
-          <LogoText>ResolveXpert</LogoText>
+          <LogoText onClick={() => navigate('/dashboard')}>
+            ResolveXpert
+          </LogoText>
         </LogoContainer>
         {!isLoginOrStartingPage && (
           <IconContainer>

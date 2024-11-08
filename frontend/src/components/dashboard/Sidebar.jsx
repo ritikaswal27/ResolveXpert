@@ -65,7 +65,7 @@ const Sidebar = ({
         >
           <option value='all'>All</option>
           {assignees?.map?.((assignee) => (
-            <option key={assignee.id} value={assignee.name}>
+            <option key={assignee.id} value={assignee.id}>
               {assignee.name}
             </option>
           ))}
