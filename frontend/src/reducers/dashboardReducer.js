@@ -9,14 +9,13 @@ const initialState = {
     search: '',
   },
   approvalFilters: {
-    category: 'all', // Added category filter for Issue Approval
-    employee: 'all', // Added employee filter for Issue Approval
-    sortBy: 'createdAt', // Sorting field
-    order: 'asc', // Sorting order
-    search: '', // Search term
+    category: 'all',
+    employee: 'all',
+    sortBy: 'createdAt',
+    order: 'asc',
+    search: '',
   },
   userFilters: {
-    // New filters specific to Users Page
     role: 'all',
     gender: 'all',
     search: '',

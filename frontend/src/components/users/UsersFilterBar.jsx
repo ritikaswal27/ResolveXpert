@@ -1,4 +1,3 @@
-// src/components/UsersFilterBar.js
 import React, { useContext } from 'react';
 import { IssueContext } from '../../context/IssueContext';
 import styled from 'styled-components';

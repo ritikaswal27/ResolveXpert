@@ -1,4 +1,3 @@
-// src/context/AuthContext.js
 import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
 
@@ -53,5 +52,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use auth context
 export const useAuth = () => useContext(AuthContext);

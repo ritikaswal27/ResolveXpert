@@ -1,4 +1,3 @@
-// src/components/UserDetailModal.js
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { IssueContext } from '../../context/IssueContext';
